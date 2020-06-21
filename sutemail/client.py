@@ -21,12 +21,12 @@ from .auth import Auth
 
 
 class MailClient(Auth):
-    def __init__(self, user_id: str=None, passwd: str=None):
+    def __init__(self, user_id: str=None, passwd: str=None, ran: bool=False):
         Auth.__init__(self)
         if user_id and passwd:
             self.login_with_uid_and_passwd(user_id, passwd)
         else:
-            self.login_with_cookies()
+            self.login_with_cookies(random=ran)
 
     def start_chrome_driver(self, path):
         """
