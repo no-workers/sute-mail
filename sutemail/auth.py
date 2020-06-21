@@ -24,8 +24,10 @@ class Auth(object):
         }
 
 
-    def login_with_cookies(self):
-        if os.path.isfile("./cookies.json"):
+    def login_with_cookies(self, random: bool=False):
+        if random:
+            self.cookies = self.get_cookies()
+        elif os.path.isfile("./cookies.json"):
             with open("./cookies.json") as file:
                 self.cookies = json.load(file)
         else:
@@ -34,6 +36,7 @@ class Auth(object):
             dictオブジェクトをcookiesオブジェクトに変換
         """
         self.session.cookies = cookiejar_from_dict(self.cookies)
+        self.save_cookies()
 
 
     def login_with_uid_and_passwd(self, user_id: str, password: str):
@@ -78,6 +81,7 @@ class Auth(object):
             self.session.cookies = cookiejar_from_dict(self.session.cookies.get_dict())
         else:
             print(f"failed {sys._getframe().f_code.co_name} with statu code {req.status_code}")
+        self.save_cookies()
 
 
     def get_cookies(self) -> dict:
@@ -87,6 +91,12 @@ class Auth(object):
         if req.status_code == 200:
             pattern = r"csrf_subtoken_check=[a-zA-z0-9]*"
             self.login_token = re.findall(pattern, req.text)[0].lstrip("csrf_subtoken_check=")
+            soup = BeautifulSoup(req.text, "html.parser")
+            self.passwd = re.findall(r"[0-9]*", soup.find("td", id="area_passwordview").string)[11]
+            self.userID = re.findall(r"[0-9]*", soup.find("td", id="area_numberview").string)[12]
+            print(f"""アカウントの作成に成功
+userid : {self.userID}
+passwd : {self.passwd}""")
             return req.cookies.get_dict()
         else:
             print(f"failed {sys._getframe().f_code.co_name} with statu code {req.status_code}")
