@@ -128,7 +128,6 @@ class Mail(object):
             "noscroll": "1"
         }
         param = urllib.parse.urlencode(para)
-        print(Config.HOST + Config.RECV_MAIL + "?" + param)
         self.driver.get(
             Config.HOST + Config.RECV_MAIL + "?" + param
         )
