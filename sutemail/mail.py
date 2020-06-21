@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from typing import List
 import random
 import re
+import urllib.parse
 
 from .config import Config
 
@@ -116,5 +117,22 @@ class Mail(object):
                 num_key[numkey[0]] = numkey[2]
         return num_key
 
-    def get_mail(self, mail_key: str, mail_num: str):
-        pass
+    def get_mail(self, mail_num: str, mail_key: str) -> dict:
+        """本来ならrequestsを使って実装したいが内部で行われているリダイレクトが再現できないためseleniumを使用する"""
+        para = {
+            "UID_enc": self.cookies["cookie_uidenc_seted"],
+            "num": mail_num,
+            "key": mail_key,
+            "t": str(int(time.time())),
+            "pagewidth": "1108",
+            "noscroll": "1"
+        }
+        param = urllib.parse.urlencode(para)
+        print(Config.HOST + Config.RECV_MAIL + "?" + param)
+        self.driver.get(
+            Config.HOST + Config.RECV_MAIL + "?" + param
+        )
+        mail = {}
+        mail["title"] = self.driver.find_element_by_xpath('//*[@id="area-data"]/div[1]/div').text
+        mail["body"] = self.driver.find_element_by_xpath('//*[@id="area-data"]/div[2]/div').text
+        return mail

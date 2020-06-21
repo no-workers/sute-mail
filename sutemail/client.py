@@ -22,22 +22,20 @@ from .mail import Mail
 
 
 class MailClient(Auth, Mail):
-    def __init__(self, user_id: str=None, passwd: str=None, random: bool=False):
+    def __init__(self, user_id: str=None, passwd: str=None, random: bool=False, driver_path: str="chromedriver"):
         Auth.__init__(self)
         if user_id and passwd:
             self.login_with_uid_and_passwd(user_id, passwd)
         else:
             self.login_with_cookies(random=random)
+        self.start_chrome_driver(driver_path)
         Mail.__init__(self)
 
     def start_chrome_driver(self, path):
-        """
-            start chrome driver without any head and log
-        """
         options = Options()
-        options.add_argument("--headless")
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        options.add_argument('--log-level=3')
+        # options.add_argument("--headless")
+        # options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        # options.add_argument('--log-level=3')
         print("starting chrome")
         self.driver = Chrome(options=options, executable_path=path)
 
