@@ -26,6 +26,9 @@ class Auth(object):
                 self.cookies = json.load(file)
         else:
             self.cookies = self.get_cookies()
+        """
+            dictオブジェクトをcookiesオブジェクトに変換
+        """
         self.session.cookies = cookiejar_from_dict(self.cookies)
 
     def login_with_uid_and_passwd(self, user_id: str, password: str):
@@ -58,7 +61,11 @@ class Auth(object):
             params=param,
             allow_redirects=False
         )
+        """
+            重複するcookiesをなくすために一度辞書にする
+        """
         self.session.cookies.update(req.cookies.get_dict())
+        self.session.cookies = cookiejar_from_dict(self.session.cookies.get_dict())
 
     def get_cookies(self) -> dict:
         req = self.session.get(
