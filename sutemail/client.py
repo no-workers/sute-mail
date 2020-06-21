@@ -33,9 +33,9 @@ class MailClient(Auth, Mail):
 
     def start_chrome_driver(self, path):
         options = Options()
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
         # options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        # options.add_argument('--log-level=3')
+        options.add_argument('--log-level=3')
         print("starting chrome")
         self.driver = Chrome(options=options, executable_path=path)
 
