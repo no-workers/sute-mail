@@ -18,15 +18,17 @@ except ImportError:
 
 from .const import Const
 from .auth import Auth
+from .mail import Mail
 
 
-class MailClient(Auth):
+class MailClient(Auth, Mail):
     def __init__(self, user_id: str=None, passwd: str=None, random: bool=False):
         Auth.__init__(self)
         if user_id and passwd:
             self.login_with_uid_and_passwd(user_id, passwd)
         else:
             self.login_with_cookies(random=random)
+        Mail.__init__(self)
 
     def start_chrome_driver(self, path):
         """
