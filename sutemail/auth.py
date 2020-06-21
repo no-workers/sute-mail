@@ -1,6 +1,8 @@
 import os
 import json
 import requests
+import sys
+
 
 from requests.cookies import cookiejar_from_dict
 
@@ -13,12 +15,14 @@ import re
 from .config import Config
 
 
+
 class Auth(object):
     def __init__(self):
         self.session = requests.Session()
         self.session.headers = {
             "User-Agent": Config.USER_AGENT
         }
+
 
     def login_with_cookies(self):
         if os.path.isfile("./cookies.json"):
@@ -30,6 +34,7 @@ class Auth(object):
             dictオブジェクトをcookiesオブジェクトに変換
         """
         self.session.cookies = cookiejar_from_dict(self.cookies)
+
 
     def login_with_uid_and_passwd(self, user_id: str, password: str):
         self.login_with_cookies()
@@ -48,8 +53,12 @@ class Auth(object):
             Config.HOST + Config.INDEX,
             params=param
         )
-        uid = req.text.lstrip("OK:")
-        self.reissue_cookies(uid)
+        if req.status_code == 200:
+            uid = req.text.lstrip("OK:")
+            self.reissue_cookies(uid)
+        else:
+            print(f"failed {sys._getframe().f_code.co_name} with statu code {req.status_code}")
+
 
     def reissue_cookies(self, uid: str):
         param = {
@@ -61,19 +70,26 @@ class Auth(object):
             params=param,
             allow_redirects=False
         )
-        """
-            重複するcookiesをなくすために一度辞書にする
-        """
-        self.session.cookies.update(req.cookies.get_dict())
-        self.session.cookies = cookiejar_from_dict(self.session.cookies.get_dict())
+        if req.status_code == 200:
+            """
+                重複するcookiesをなくすために一度辞書にする
+            """
+            self.session.cookies.update(req.cookies.get_dict())
+            self.session.cookies = cookiejar_from_dict(self.session.cookies.get_dict())
+        else:
+            print(f"failed {sys._getframe().f_code.co_name} with statu code {req.status_code}")
+
 
     def get_cookies(self) -> dict:
         req = self.session.get(
             Config.HOST,
         )
-        pattern = r"csrf_subtoken_check=[a-zA-z0-9]*"
-        self.login_token = re.findall(pattern, req.text)[0].lstrip("csrf_subtoken_check=")
-        return req.cookies.get_dict()
+        if req.status_code == 200:
+            pattern = r"csrf_subtoken_check=[a-zA-z0-9]*"
+            self.login_token = re.findall(pattern, req.text)[0].lstrip("csrf_subtoken_check=")
+            return req.cookies.get_dict()
+        else:
+            print(f"failed {sys._getframe().f_code.co_name} with statu code {req.status_code}")
 
     def save_cookies(self):
         with open("./cookies.json", "w") as file:
