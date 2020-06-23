@@ -62,7 +62,6 @@ class Mail(object):
             )
             if r.status_code == 200:
                 return f"{name}@{domain}"
-        raise Exception("できなかったってさ")
 
     def check_new_mail(self, name: str, domain: str) -> bool:
         params = {
@@ -131,7 +130,23 @@ class Mail(object):
         self.driver.get(
             Config.HOST + Config.RECV_MAIL + "?" + param
         )
+        time.sleep(3)
         mail = {}
         mail["title"] = self.driver.find_element_by_xpath('//*[@id="area-data"]/div[1]/div').text
         mail["body"] = self.driver.find_element_by_xpath('//*[@id="area-data"]/div[2]/div').text
+        mail["id"] = mail_num
         return mail
+
+    def delete_mail(self, id: str):
+        param = {
+            "action": "delMail",
+            "nopost": "1",
+            "num": id,
+            "t": str(int(time.time())),
+            "_": str(int(time.time()))
+        }
+        r = self.session.get(
+            Config.HOST + Config.RECV,
+            params=param
+        )
+        print(r.text)

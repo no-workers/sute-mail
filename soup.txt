@@ -1,0 +1,149 @@
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="text/css" http-equiv="Content-Style-Type"/>
+<script src="js/base64.js"></script>
+<style type="text/css">
+input {
+	-webkit-appearance: none;
+}
+body {
+	font-family: 'Hiragino Kaku Gothic Pro W3','Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
+	word-break: break-all;
+			padding:0px;
+		margin:0px;
+		font-size: 1.1em;
+	-webkit-text-size-adjust: 100%;
+	
+			overflow: visible;
+	}
+
+
+	
+	@media (prefers-color-scheme: dark) {		body {
+			background-color: rgb(170, 170, 170);
+			padding: 5px;
+			#color: white;
+		}
+		a {
+			#color:red;
+		}
+	}	
+</style>
+</head>
+<body>
+<script>
+			try{
+			parent.setIframeInit('36891801');
+		} catch (e) {
+			console.log("error: parent.setIframeInit: "+e);
+		}
+	</script>
+<div id="area-header">
+</div>
+<div class="defaultmode" id="area-data">
+<div style="font-weight:bold;padding:4px;margin-bottom:8px;border-bottom:2px solid #eeeeee;font-size:140%;">
+<div>‚Í‚¶‚ß‚Ü‚µ‚Ä</div>
+</div>
+<div>
+<div dir="ltr">‚æ‚ë‚µ‚­‚¨Šè‚¢‚µ‚Ü‚·</div> </div>
+</div>
+<p></p>
+<script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
+<script>
+		twemoji.parse(document.getElementById('area-data'), {"size":16});
+		</script>
+<script>
+/*
+function getClientHeight() {
+	if (window.innerHeight){
+		return window.innerHeight;
+	}else if(document.documentElement && document.documentElement.clientHeight != 0){
+		return document.documentElement.clientHeight;
+	}
+}
+*/
+function getClientWidth() {
+			return 1088;
+	}
+
+var updateHeightFlag = false;
+function updateHeight() {
+	var _width = document.documentElement.scrollWidth || document.body.scrollWidth;
+	var _height = document.documentElement.scrollHeight || document.body.scrollHeight;
+	
+	
+	try{
+		if (getClientWidth() < _width) {
+			var _sizescale = getClientWidth() / _width;
+			if (document.documentElement) {
+				document.documentElement.style.zoom = _sizescale;
+			} else {
+				document.getElementsByTagName("html")[0].style.zoom = _sizescale;
+			}
+			_height = _height * _sizescale;
+		}
+
+		if (_height <= 200) {
+			_height = 200;
+		}
+	} catch (e) {
+		console.log("error: updateHeight(): "+e);
+	}
+	
+	console.log("updateHeight(): "+_height);
+	
+	updateHeightFlag = true;
+	parent.setIframeSize('36891801', _height);
+}
+
+function secLinkAlert() {
+	alert('‚±‚ÌƒŠƒ“ƒN‚Í—˜—p‚Å‚«‚Ü‚¹‚ñB');
+}
+
+function init(){
+
+	try{
+		
+		for(var i=0; i<document.links.length; ++i) {
+			//XSS‘Îô
+			if ((document.links[i].href.toLowerCase()).indexOf("javascript") == 0 || (document.links[i].href.toLowerCase()).indexOf("data") == 0) {
+				document.links[i].href = "javascript:secLinkAlert();";
+				continue;
+			}
+			
+							//PC
+				if ((document.links[i].href.toLowerCase()).indexOf("mailto:") != -1) {
+					var _tmp = (document.links[i].href).split("mailto:");
+					document.links[i].href = "https://m.kuku.lu/new.php?sendmail_to="+escape(_tmp[1]);
+
+					document.links[i].target = "_blank";
+				} else {
+					document.links[i].target = "_blank";
+				}
+								}
+	} catch (e) {
+		console.log("error: init(): "+e);
+	}
+		
+			updateHeight();
+		
+		setTimeout(function(){
+			//updateHeight();
+		}, 1000*1);
+		
+		window.onload = function() {
+			setTimeout(function(){
+				updateHeight();
+			}, 100);
+		};
+		
+	}
+function updateSize() {
+}
+
+init();
+
+
+</script>
+</body></html>
